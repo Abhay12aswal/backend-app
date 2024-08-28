@@ -17,12 +17,17 @@ exports.createProduct = cathAsyncError(
 )
 
 
-//get all products 
+//Get all products 
 exports.getallProducts = cathAsyncError(
     async (req,res)=>{
 
-        const apiFeatures = new ApiFeatures(Product.find(), req.query).search();
-        // const products = await  Product.find();
+        const resultPerPage = 5;
+        const productCount = await Product.countDocuments();
+
+        const apiFeatures = new ApiFeatures(Product.find(), req.query)
+        .search()
+        .filter()
+        .pagination(resultPerPage);
         const products = await  apiFeatures.query;
         res.status(200).json({
             success: true,
@@ -44,7 +49,8 @@ exports.getProductDetails = cathAsyncError(
     
         res.status(200).json({
             success: true,
-            product
+            product,
+            productCount
         })
     }
 )

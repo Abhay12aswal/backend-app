@@ -11,23 +11,16 @@ process.on('uncaughtException',(err)=>{
 })
 
 //config
-// dotenv.config({path: './config/congig.env'})
+dotenv.config({ path: './config/config.env' });
 
 //connecting to db
 connectDatabase();
 
 
-app.get('/',(req,res)=>{
-    res.send("root is working")
-})
-
 const server = app.listen(4000,()=>{
     console.log('listening to port 4000')
 })
 
-// app.listen(process.env.PORT,()=>{
-//     console.log('listening to port 8080')
-// })
 
 //unhandled promise rejection
 process.on("unhandledRejection",err=>{

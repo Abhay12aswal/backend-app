@@ -1,5 +1,9 @@
 const mongoose= require('mongoose');
 const validator= require('validator');
+const bcrypt = require('bcrypt')
+const jwt= require('jsonwebtoken')
+require('dotenv').config();
+
 
 const userSchema= new mongoose.Schema({
 
@@ -40,6 +44,28 @@ const userSchema= new mongoose.Schema({
     resetPasswordExpire:Date,
 
     
+});
+
+userSchema.pre("save",async function (next) {
+
+    if(!this.isModified("password")){
+        next();
+    }
+
+    this.password=await bcrypt.hash(this.password,10);
 })
 
-module.exports= mongoose.model("User",userSchema);
+//JWT TOKEN
+
+userSchema.methods.getJWTToken = function(){
+    return jwt.sign({id: this._id} , process.env.JWT_SECRET,{
+        expiresIn: '5d',
+    });
+}
+
+//compate password
+userSchema.methods.comparePassword = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password)
+}
+
+module.exports= mongoose.model("User",userSchema); 

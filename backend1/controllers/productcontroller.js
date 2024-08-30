@@ -7,6 +7,8 @@ const ApiFeatures = require('../utils/apifeatures');
 exports.createProduct = cathAsyncError(
     async(req,res,next)=>{
 
+        req.body.user = req.user.id;
+
         const product = await Product.create(req.body);
     
         res.status(201).json({
@@ -42,11 +44,11 @@ exports.getProductDetails = cathAsyncError(
     async(req,res,next)=>{
 
         const product= await Product.findById(req.params.id);
+        const productCount = await Product.countDocuments();
     
         if(!product){
             return next(new ErrorHandler('Product not found', 404));
         }
-    
         res.status(200).json({
             success: true,
             product,
